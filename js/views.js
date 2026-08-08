@@ -9,8 +9,8 @@ const Views = {
             <p class="text-muted small">Sistem Pendampingan Murid oleh Guru Wali<br><span class="badge bg-light text-dark border">Permendikdasmen No. 11 Th 2025</span></p>
           </div>
           <form id="form-login" onsubmit="App.handleLogin(event)">
-            <div class="mb-3"><label class="form-label font-weight-bold">Username</label><input type="text" class="form-control" value="198503152010011002" required></div>
-            <div class="mb-4"><label class="form-label font-weight-bold">Kata Sandi</label><input type="password" class="form-control" value="123456" required></div>
+            <div class="mb-3"><label class="form-label font-weight-bold">Username</label><input type="text" class="form-control" value="masukkan username" required></div>
+            <div class="mb-4"><label class="form-label font-weight-bold">Kata Sandi</label><input type="password" class="form-control" value="*****" required></div>
             <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold"><i class="bi bi-box-arrow-in-right me-2"></i> Masuk Aplikasi</button>
           </form>
         </div>
