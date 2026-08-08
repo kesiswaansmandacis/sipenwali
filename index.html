@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SIPENWALI - Permendikdasmen No. 11 Tahun 2025</title>
+  <title>AI Guru Wali - Permendikdasmen No. 11 Tahun 2025</title>
 
   <!-- Google Fonts: Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,7 +32,7 @@
       
       <a class="navbar-brand d-flex align-items-center gap-2" href="#" onclick="App.navigateTo('dashboard')">
         <i class="bi bi-mortarboard-fill text-primary fs-4"></i>
-        <span class="brand-title">SIPENWALI</span>
+        <span class="brand-title">AI Guru Wali</span>
         <span class="brand-badge d-none d-sm-inline-block">Permendikdasmen No. 11 / 2025</span>
       </a>
 
@@ -42,11 +42,9 @@
             <div class="icon-box icon-blue me-2" style="width: 36px; height: 36px; font-size: 1rem;">
               <i class="bi bi-person-fill"></i>
             </div>
-            <span class="fw-semibold small d-none d-md-inline">Ahmad Fauzi, S.Pd.</span>
+            <span class="fw-semibold small d-none d-md-inline">Pengguna</span>
           </a>
           <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
-            <li><h6 class="dropdown-header">Guru Wali Kelas X-A</h6></li>
-            <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item text-danger" href="#" onclick="App.logout()"><i class="bi bi-box-arrow-right me-2"></i>Keluar</a></li>
           </ul>
         </div>
@@ -54,7 +52,7 @@
     </div>
   </nav>
 
-  <!-- SIDEBAR KIRI (8 MODUL) -->
+  <!-- SIDEBAR KIRI -->
   <aside class="sidebar-wrapper" id="sidebar-wrapper">
     <div class="sidebar-nav">
       <div class="nav-label">Menu Utama</div>
@@ -87,7 +85,7 @@
   <!-- MAIN CONTENT CONTAINER -->
   <main class="main-content" id="main-content">
     <div id="view-container" class="container-fluid">
-      <!-- Tampilan Dinamis Seluruh Modul -->
+      <!-- Dynamic View -->
     </div>
   </main>
 
@@ -113,7 +111,7 @@
               </div>
               <div class="col-md-6">
                 <label class="form-label fw-semibold">URL Foto Murid</label>
-                <input type="url" id="foto" class="form-control" placeholder="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150">
+                <input type="url" id="foto" class="form-control" placeholder="https://example.com/foto.jpg">
               </div>
               <div class="col-md-6">
                 <label class="form-label fw-semibold">Status Murid</label>
@@ -158,12 +156,12 @@
     </div>
   </div>
 
-  <!-- MODAL FORM PENDAMPINGAN LENGKAP -->
+  <!-- MODAL FORM PENDAMPINGAN -->
   <div class="modal fade" id="modalPDP" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content border-0 shadow">
         <div class="modal-header bg-primary text-white">
-          <h5 class="modal-title fw-bold" id="modalPDPTitle">Sesi Pendampingan Baru</h5>
+          <h5 class="modal-title fw-bold">Sesi Pendampingan Baru</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <form id="form-pdp" onsubmit="App.savePendampingan(event)">
@@ -186,16 +184,16 @@
               </div>
               <div class="col-12">
                 <label class="form-label fw-semibold">Identifikasi Masalah / Kendala Murid</label>
-                <textarea id="pdp_masalah" class="form-control" rows="2" placeholder="Jelaskan masalah akademik/karakter murid..." required></textarea>
+                <textarea id="pdp_masalah" class="form-control" rows="2" placeholder="Jelaskan masalah murid..." required></textarea>
               </div>
               <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center mb-1">
                   <label class="form-label fw-semibold mb-0">Analisis Akar Masalah</label>
-                  <button type="button" class="btn btn-sm btn-outline-primary" id="btn-ai-analyze" onclick="App.autoAnalyzeAI()">
+                  <button type="button" class="btn btn-sm btn-outline-primary" onclick="App.autoAnalyzeAI()">
                     <i class="bi bi-stars me-1"></i> Bantu Analisis AI
                   </button>
                 </div>
-                <textarea id="pdp_analisis" class="form-control" rows="2" placeholder="Faktor penyebab utama kendala..."></textarea>
+                <textarea id="pdp_analisis" class="form-control" rows="2" placeholder="Faktor penyebab kendala..."></textarea>
               </div>
               <div class="col-md-6">
                 <label class="form-label fw-semibold">Target Solusi Capaian</label>
@@ -205,26 +203,12 @@
                 <label class="form-label fw-semibold">Rencana Tindak Lanjut (RTL)</label>
                 <textarea id="pdp_rtl" class="form-control" rows="2" placeholder="Langkah-langkah aksi..." required></textarea>
               </div>
-              <div class="col-md-8">
-                <label class="form-label fw-semibold">Evaluasi & Catatan Hasil Sesi</label>
-                <input type="text" id="pdp_evaluasi" class="form-control" placeholder="Catatan respon murid...">
-              </div>
-              <div class="col-md-4">
+              <div class="col-md-12">
                 <label class="form-label fw-semibold">Status Sesi</label>
                 <select id="pdp_status" class="form-select" required>
                   <option value="Proses">Proses</option>
                   <option value="Selesai">Selesai</option>
-                  <option value="Butuh Follow-up">Butuh Follow-up</option>
                 </select>
-              </div>
-              <div class="col-md-6 border-top pt-3">
-                <label class="form-label fw-semibold"><i class="bi bi-camera me-1"></i> Upload Foto Kegiatan</label>
-                <input type="file" id="pdp_foto_file" class="form-control" accept="image/*">
-                <img id="preview_foto" src="" class="mt-2 rounded border d-none" style="max-height: 80px;">
-              </div>
-              <div class="col-md-6 border-top pt-3">
-                <label class="form-label fw-semibold"><i class="bi bi-file-earmark-arrow-up me-1"></i> Upload Dokumen Pendukung (PDF/Doc)</label>
-                <input type="file" id="pdp_doc_file" class="form-control" accept=".pdf,.doc,.docx">
               </div>
             </div>
           </div>
