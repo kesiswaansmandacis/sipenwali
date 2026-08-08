@@ -23,12 +23,12 @@ body {
 .sidebar-nav .nav-link { color: #495057; padding: 0.75rem 1.5rem; display: flex; align-items: center; gap: 12px; border-left: 4px solid transparent; }
 .sidebar-nav .nav-link.active { color: var(--primary-blue); background-color: #e7f1ff; border-left-color: var(--primary-blue); font-weight: 600; }
 
-.main-content { margin-left: var(--sidebar-width); margin-top: 60px; padding: 2rem; min-height: calc(100vh - 60px); }
+.main-content { margin-left: var(--sidebar-width); margin-top: 60px; padding: 2rem; transition: all 0.3s ease; }
 
 @media (max-width: 991.98px) {
   .sidebar-wrapper { margin-left: calc(-1 * var(--sidebar-width)); }
   .sidebar-wrapper.show { margin-left: 0; }
-  .main-content { margin-left: 0; padding: 1.25rem; }
+  .main-content { margin-left: 0 !important; padding: 1.25rem; }
 }
 
 .card-custom { border: none; border-radius: 12px; background: #ffffff; box-shadow: var(--material-shadow); }
