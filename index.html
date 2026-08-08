@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIPENWALI - Permendikdasmen No. 11 Tahun 2025</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5.3 CSS & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- Chart.js 4.4 & html2pdf.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <!-- Custom CSS Theme -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- NAVBAR ATAS -->
+  <nav class="navbar navbar-expand-lg fixed-top top-navbar" id="main-nav">
+    <div class="container-fluid">
+      <button class="btn btn-link text-dark d-lg-none me-2" onclick="App.toggleSidebar()">
+        <i class="bi bi-list fs-3"></i>
+      </button>
+      
+      <a class="navbar-brand d-flex align-items-center gap-2" href="#" onclick="App.navigateTo('dashboard')">
+        <i class="bi bi-mortarboard-fill text-primary fs-4"></i>
+        <span class="brand-title">SIPENWALI</span>
+        <span class="brand-badge d-none d-sm-inline-block">Permendikdasmen No. 11 / 2025</span>
+      </a>
+
+      <div class="ms-auto d-flex align-items-center gap-3">
+        <div class="dropdown">
+          <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle text-dark" data-bs-toggle="dropdown">
+            <div class="icon-box icon-blue me-2" style="width: 36px; height: 36px; font-size: 1rem;">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <span class="fw-semibold small d-none d-md-inline">Ahmad Fauzi, S.Pd.</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+            <li><h6 class="dropdown-header">Guru Wali Kelas X-A</h6></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="#" onclick="App.logout()"><i class="bi bi-box-arrow-right me-2"></i>Keluar</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- SIDEBAR KIRI (8 MODUL) -->
+  <aside class="sidebar-wrapper" id="sidebar-wrapper">
+    <div class="sidebar-nav">
+      <div class="nav-label">Menu Utama</div>
+      <a href="#" class="nav-link active" data-view="dashboard" onclick="App.navigateTo('dashboard')">
+        <i class="bi bi-grid-1x2-fill"></i> Dashboard
+      </a>
+      <a href="#" class="nav-link" data-view="murid" onclick="App.navigateTo('murid')">
+        <i class="bi bi-people-fill"></i> Kelola Murid
+      </a>
+      <a href="#" class="nav-link" data-view="pendampingan" onclick="App.navigateTo('pendampingan')">
+        <i class="bi bi-journal-bookmark-fill"></i> Pendampingan
+      </a>
+      <a href="#" class="nav-link" data-view="karakter" onclick="App.navigateTo('karakter')">
+        <i class="bi bi-award-fill"></i> Karakter Murid
+      </a>
+      <a href="#" class="nav-link" data-view="komunikasi" onclick="App.navigateTo('komunikasi')">
+        <i class="bi bi-chat-dots-fill"></i> Komunikasi Ortu
+      </a>
+      <a href="#" class="nav-link" data-view="laporan" onclick="App.navigateTo('laporan')">
+        <i class="bi bi-file-earmark-bar-graph-fill"></i> Generator Laporan
+      </a>
+
+      <div class="nav-label mt-3">Fitur Cerdas</div>
+      <a href="#" class="nav-link text-primary fw-semibold" data-view="ai-assistant" onclick="App.navigateTo('ai-assistant')">
+        <i class="bi bi-robot"></i> AI Chat Interaktif
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="main-content" id="main-content">
+    <div id="view-container" class="container-fluid">
+      <!-- Tampilan Dinamis Seluruh Modul -->
+    </div>
+  </main>
+
+  <!-- MODAL FORM CRUD MURID -->
+  <div class="modal fade" id="modalMurid" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title fw-bold" id="modalMuridTitle">Tambah Data Murid Baru</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="form-murid" onsubmit="App.saveMurid(event)">
+          <div class="modal-body p-4">
+            <input type="hidden" id="id_murid">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">NIS (Nomor Induk Siswa)</label>
+                <input type="text" id="nis" class="form-control" placeholder="Contoh: 0051234567" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Nama Lengkap Murid</label>
+                <input type="text" id="nama_murid" class="form-control" placeholder="Contoh: Budi Santoso" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">URL Foto Murid</label>
+                <input type="url" id="foto" class="form-control" placeholder="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Status Murid</label>
+                <select id="status" class="form-select" required>
+                  <option value="Aktif">Aktif</option>
+                  <option value="Perlu Perhatian">Perlu Perhatian</option>
+                  <option value="Lulus">Lulus</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Nama Orang Tua / Wali</label>
+                <input type="text" id="nama_ortu" class="form-control" placeholder="Contoh: Slamet Santoso">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">No. HP / WhatsApp Kontak</label>
+                <input type="text" id="nomor_hp" class="form-control" placeholder="Contoh: 081234567890">
+              </div>
+              <div class="col-12">
+                <label class="form-label fw-semibold">Alamat Rumah</label>
+                <textarea id="alamat" class="form-control" rows="2" placeholder="Alamat domisili murid..."></textarea>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">Minat</label>
+                <input type="text" id="minat" class="form-control" placeholder="Contoh: Pemrograman">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">Bakat</label>
+                <input type="text" id="bakat" class="form-control" placeholder="Contoh: Logika Matematika">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">Cita-cita</label>
+                <input type="text" id="cita_cita" class="form-control" placeholder="Contoh: Software Engineer">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer bg-light">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-primary fw-semibold"><i class="bi bi-save me-1"></i> Simpan Data Murid</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL FORM PENDAMPINGAN LENGKAP -->
+  <div class="modal fade" id="modalPDP" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title fw-bold" id="modalPDPTitle">Sesi Pendampingan Baru</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="form-pdp" onsubmit="App.savePendampingan(event)">
+          <div class="modal-body p-4">
+            <input type="hidden" id="id_pendampingan">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">Tanggal Sesi</label>
+                <input type="date" id="pdp_tanggal" class="form-control" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">Guru Wali / Konselor</label>
+                <input type="text" id="pdp_nama_guru" class="form-control" required readonly>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">Pilih Murid Binaan</label>
+                <select id="pdp_id_murid" class="form-select" required>
+                  <option value="">-- Pilih Murid Binaan --</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <label class="form-label fw-semibold">Identifikasi Masalah / Kendala Murid</label>
+                <textarea id="pdp_masalah" class="form-control" rows="2" placeholder="Jelaskan masalah akademik/karakter murid..." required></textarea>
+              </div>
+              <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <label class="form-label fw-semibold mb-0">Analisis Akar Masalah</label>
+                  <button type="button" class="btn btn-sm btn-outline-primary" id="btn-ai-analyze" onclick="App.autoAnalyzeAI()">
+                    <i class="bi bi-stars me-1"></i> Bantu Analisis AI
+                  </button>
+                </div>
+                <textarea id="pdp_analisis" class="form-control" rows="2" placeholder="Faktor penyebab utama kendala..."></textarea>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Target Solusi Capaian</label>
+                <textarea id="pdp_target" class="form-control" rows="2" placeholder="Target konkret..." required></textarea>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Rencana Tindak Lanjut (RTL)</label>
+                <textarea id="pdp_rtl" class="form-control" rows="2" placeholder="Langkah-langkah aksi..." required></textarea>
+              </div>
+              <div class="col-md-8">
+                <label class="form-label fw-semibold">Evaluasi & Catatan Hasil Sesi</label>
+                <input type="text" id="pdp_evaluasi" class="form-control" placeholder="Catatan respon murid...">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">Status Sesi</label>
+                <select id="pdp_status" class="form-select" required>
+                  <option value="Proses">Proses</option>
+                  <option value="Selesai">Selesai</option>
+                  <option value="Butuh Follow-up">Butuh Follow-up</option>
+                </select>
+              </div>
+              <div class="col-md-6 border-top pt-3">
+                <label class="form-label fw-semibold"><i class="bi bi-camera me-1"></i> Upload Foto Kegiatan</label>
+                <input type="file" id="pdp_foto_file" class="form-control" accept="image/*">
+                <img id="preview_foto" src="" class="mt-2 rounded border d-none" style="max-height: 80px;">
+              </div>
+              <div class="col-md-6 border-top pt-3">
+                <label class="form-label fw-semibold"><i class="bi bi-file-earmark-arrow-up me-1"></i> Upload Dokumen Pendukung (PDF/Doc)</label>
+                <input type="file" id="pdp_doc_file" class="form-control" accept=".pdf,.doc,.docx">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer bg-light">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-primary fw-semibold"><i class="bi bi-save me-1"></i> Simpan Sesi Pendampingan</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Custom App Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/views.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

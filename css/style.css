@@ -1,0 +1,77 @@
+:root {
+  --primary-blue: #0d6efd;
+  --accent-green: #198754;
+  --accent-green-light: #e8f5e9;
+  --bg-light: #f8f9fa;
+  --material-shadow: 0 4px 20px 0 rgba(0,0,0,.05);
+  --sidebar-width: 260px;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg-light);
+  color: #333333;
+}
+
+.top-navbar { height: 60px; background-color: #ffffff !important; border-bottom: 1px solid #e9ecef; z-index: 1030; }
+.brand-title { font-weight: 700; color: var(--primary-blue); }
+.brand-badge { background-color: var(--accent-green-light); color: var(--accent-green); font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 6px; }
+
+.sidebar-wrapper { width: var(--sidebar-width); position: fixed; top: 60px; bottom: 0; left: 0; z-index: 1020; background-color: #ffffff; border-right: 1px solid #e9ecef; }
+.sidebar-nav { padding: 1rem 0; }
+.sidebar-nav .nav-label { font-size: 0.75rem; text-transform: uppercase; color: #adb5bd; padding: 0.5rem 1.5rem; font-weight: 700; }
+.sidebar-nav .nav-link { color: #495057; padding: 0.75rem 1.5rem; display: flex; align-items: center; gap: 12px; border-left: 4px solid transparent; }
+.sidebar-nav .nav-link.active { color: var(--primary-blue); background-color: #e7f1ff; border-left-color: var(--primary-blue); font-weight: 600; }
+
+.main-content { margin-left: var(--sidebar-width); margin-top: 60px; padding: 2rem; min-height: calc(100vh - 60px); }
+
+@media (max-width: 991.98px) {
+  .sidebar-wrapper { margin-left: calc(-1 * var(--sidebar-width)); }
+  .sidebar-wrapper.show { margin-left: 0; }
+  .main-content { margin-left: 0; padding: 1.25rem; }
+}
+
+.card-custom { border: none; border-radius: 12px; background: #ffffff; box-shadow: var(--material-shadow); }
+
+.stat-card { border-left: 5px solid var(--primary-blue); }
+.stat-card.warning { border-left-color: #fd7e14; }
+.stat-card.green { border-left-color: var(--accent-green); }
+.stat-card.teal { border-left-color: #20c997; }
+
+.icon-box { width: 52px; height: 52px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; }
+.icon-blue { background-color: #e7f1ff; color: var(--primary-blue); }
+.icon-orange { background-color: #fff3cd; color: #fd7e14; }
+.icon-green { background-color: var(--accent-green-light); color: var(--accent-green); }
+.icon-teal { background-color: #e6fffa; color: #20c997; }
+
+.chart-container { position: relative; height: 320px; width: 100%; }
+
+.prompt-chip {
+  background-color: #f1f5f9;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  border-radius: 20px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.prompt-chip:hover { background-color: #e2e8f0; border-color: var(--primary-blue); color: var(--primary-blue); }
+
+.chat-container { height: 480px; overflow-y: auto; padding: 1.25rem; background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; }
+.chat-bubble { max-width: 82%; padding: 0.9rem 1.2rem; border-radius: 16px; margin-bottom: 1rem; line-height: 1.6; font-size: 0.95rem; }
+.chat-bubble.user { background-color: var(--primary-blue); color: #ffffff; margin-left: auto; border-bottom-right-radius: 4px; }
+.chat-bubble.ai { background-color: #ffffff; color: #1e293b; border: 1px solid #e2e8f0; margin-right: auto; border-bottom-left-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+
+.report-paper { background-color: #ffffff; padding: 2.5rem; border-radius: 8px; border: 1px solid #cbd5e1; color: #000000; font-family: 'Times New Roman', Times, serif; }
+.kop-surat { border-bottom: 3px double #000000; padding-bottom: 12px; margin-bottom: 20px; }
+.kop-title { font-size: 1.4rem; font-weight: bold; text-transform: uppercase; }
+.kop-subtitle { font-size: 1rem; font-weight: bold; }
+
+@media print {
+  body { background-color: #ffffff !important; color: #000000 !important; }
+  .top-navbar, .sidebar-wrapper, .no-print, .btn, form { display: none !important; }
+  .main-content { margin-left: 0 !important; margin-top: 0 !important; padding: 0 !important; }
+  .report-paper { border: none !important; box-shadow: none !important; padding: 0 !important; width: 100% !important; }
+}
