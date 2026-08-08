@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Guru Wali - Permendikdasmen No. 11 Tahun 2025</title>
+  <title>AI Guru Wali - Multi Role System</title>
 
   <!-- Google Fonts: Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,7 +24,7 @@
 <body>
 
   <!-- NAVBAR ATAS -->
-  <nav class="navbar navbar-expand-lg fixed-top top-navbar" id="main-nav">
+  <nav class="navbar navbar-expand-lg fixed-top top-navbar d-none" id="main-nav">
     <div class="container-fluid">
       <button class="btn btn-link text-dark d-lg-none me-2" onclick="App.toggleSidebar()">
         <i class="bi bi-list fs-3"></i>
@@ -42,7 +42,7 @@
             <div class="icon-box icon-blue me-2" style="width: 36px; height: 36px; font-size: 1rem;">
               <i class="bi bi-person-fill"></i>
             </div>
-            <span class="fw-semibold small d-none d-md-inline">Pengguna</span>
+            <span class="fw-semibold small d-none d-md-inline" id="user-display-name">Pengguna</span>
           </a>
           <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
             <li><a class="dropdown-item text-danger" href="#" onclick="App.logout()"><i class="bi bi-box-arrow-right me-2"></i>Keluar</a></li>
@@ -52,42 +52,97 @@
     </div>
   </nav>
 
-  <!-- SIDEBAR KIRI -->
-  <aside class="sidebar-wrapper" id="sidebar-wrapper">
-    <div class="sidebar-nav">
-      <div class="nav-label">Menu Utama</div>
-      <a href="#" class="nav-link active" data-view="dashboard" onclick="App.navigateTo('dashboard')">
-        <i class="bi bi-grid-1x2-fill"></i> Dashboard
-      </a>
-      <a href="#" class="nav-link" data-view="murid" onclick="App.navigateTo('murid')">
-        <i class="bi bi-people-fill"></i> Kelola Murid
-      </a>
-      <a href="#" class="nav-link" data-view="pendampingan" onclick="App.navigateTo('pendampingan')">
-        <i class="bi bi-journal-bookmark-fill"></i> Pendampingan
-      </a>
-      <a href="#" class="nav-link" data-view="karakter" onclick="App.navigateTo('karakter')">
-        <i class="bi bi-award-fill"></i> Karakter Murid
-      </a>
-      <a href="#" class="nav-link" data-view="komunikasi" onclick="App.navigateTo('komunikasi')">
-        <i class="bi bi-chat-dots-fill"></i> Komunikasi Ortu
-      </a>
-      <a href="#" class="nav-link" data-view="laporan" onclick="App.navigateTo('laporan')">
-        <i class="bi bi-file-earmark-bar-graph-fill"></i> Generator Laporan
-      </a>
-
-      <div class="nav-label mt-3">Fitur Cerdas</div>
-      <a href="#" class="nav-link text-primary fw-semibold" data-view="ai-assistant" onclick="App.navigateTo('ai-assistant')">
-        <i class="bi bi-robot"></i> AI Chat Interaktif
-      </a>
+  <!-- SIDEBAR KIRI (DINAMIS SESUAI ROLE) -->
+  <aside class="sidebar-wrapper d-none" id="sidebar-wrapper">
+    <div class="sidebar-nav" id="sidebar-menu-list">
+      <!-- Menu di-render dinamis oleh app.js berdasar Role -->
     </div>
   </aside>
 
   <!-- MAIN CONTENT CONTAINER -->
-  <main class="main-content" id="main-content">
+  <main class="main-content" id="main-content" style="margin-left: 0;">
     <div id="view-container" class="container-fluid">
-      <!-- Dynamic View -->
+      <!-- Tampilan Dinamis -->
     </div>
   </main>
+
+  <!-- MODAL FORM MASTER GURU (ADMIN PANEL) -->
+  <div class="modal fade" id="modalGuru" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title fw-bold">Tambah Guru Wali Baru</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="form-guru" onsubmit="App.saveGuru(event)">
+          <div class="modal-body p-4">
+            <div class="mb-3">
+              <label class="form-label fw-semibold">NIP / Username</label>
+              <input type="text" id="guru_nip" class="form-control" placeholder="Contoh: 198503152010011002" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Nama Guru Lengkap & Gelar</label>
+              <input type="text" id="guru_nama" class="form-control" placeholder="Contoh: Siti Nurhaliza, M.Pd." required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Kata Sandi Default</label>
+              <input type="text" id="guru_password" class="form-control" value="123456" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Penugasan Kelas Binaan</label>
+              <input type="text" id="guru_kelas" class="form-control" placeholder="Contoh: Kelas X-B" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Role Hak Akses</label>
+              <select id="guru_role" class="form-select" required>
+                <option value="Guru Wali">Guru Wali</option>
+                <option value="Kepala Sekolah / Admin">Kepala Sekolah / Admin</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer bg-light">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-primary fw-semibold"><i class="bi bi-save me-1"></i> Simpan Guru</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL RESET PASSWORD (ADMIN PANEL) -->
+  <div class="modal fade" id="modalResetPassword" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title fw-bold"><i class="bi bi-key-fill me-2"></i>Reset Password User</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="form-reset-password" onsubmit="App.handleResetPasswordSubmit(event)">
+          <div class="modal-body p-4">
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Jenis Pengguna</label>
+              <select id="reset_user_type" class="form-select" required>
+                <option value="Siswa">Siswa (Gunakan NISN)</option>
+                <option value="Guru">Guru / Admin (Gunakan NIP)</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">NIP / NISN User Target</label>
+              <input type="text" id="reset_identifier" class="form-control" placeholder="Masukkan NIP atau NISN..." required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Password Baru</label>
+              <input type="text" id="reset_new_password" class="form-control" value="123456" required>
+            </div>
+          </div>
+          <div class="modal-footer bg-light">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-danger fw-semibold"><i class="bi bi-check-circle me-1"></i> Reset Password Sekarang</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
   <!-- MODAL FORM CRUD MURID -->
   <div class="modal fade" id="modalMurid" tabindex="-1" aria-hidden="true">
@@ -102,24 +157,20 @@
             <input type="hidden" id="id_murid">
             <div class="row g-3">
               <div class="col-md-6">
-                <label class="form-label fw-semibold">NIS (Nomor Induk Siswa)</label>
-                <input type="text" id="nis" class="form-control" placeholder="Contoh: 0051234567" required>
+                <label class="form-label fw-semibold">NISN (Nomor Induk Siswa Nasional)</label>
+                <input type="text" id="nisn" class="form-control" placeholder="Contoh: 0051234567" required>
               </div>
               <div class="col-md-6">
                 <label class="form-label fw-semibold">Nama Lengkap Murid</label>
                 <input type="text" id="nama_murid" class="form-control" placeholder="Contoh: Budi Santoso" required>
               </div>
               <div class="col-md-6">
-                <label class="form-label fw-semibold">URL Foto Murid</label>
-                <input type="url" id="foto" class="form-control" placeholder="https://example.com/foto.jpg">
+                <label class="form-label fw-semibold">Kelas</label>
+                <input type="text" id="kelas" class="form-control" placeholder="Contoh: Kelas X-A" value="Kelas X-A" required>
               </div>
               <div class="col-md-6">
-                <label class="form-label fw-semibold">Status Murid</label>
-                <select id="status" class="form-select" required>
-                  <option value="Aktif">Aktif</option>
-                  <option value="Perlu Perhatian">Perlu Perhatian</option>
-                  <option value="Lulus">Lulus</option>
-                </select>
+                <label class="form-label fw-semibold">Password Akun Siswa</label>
+                <input type="text" id="password_siswa" class="form-control" value="123456" required>
               </div>
               <div class="col-md-6">
                 <label class="form-label fw-semibold">Nama Orang Tua / Wali</label>
@@ -132,18 +183,6 @@
               <div class="col-12">
                 <label class="form-label fw-semibold">Alamat Rumah</label>
                 <textarea id="alamat" class="form-control" rows="2" placeholder="Alamat domisili murid..."></textarea>
-              </div>
-              <div class="col-md-4">
-                <label class="form-label fw-semibold">Minat</label>
-                <input type="text" id="minat" class="form-control" placeholder="Contoh: Pemrograman">
-              </div>
-              <div class="col-md-4">
-                <label class="form-label fw-semibold">Bakat</label>
-                <input type="text" id="bakat" class="form-control" placeholder="Contoh: Logika Matematika">
-              </div>
-              <div class="col-md-4">
-                <label class="form-label fw-semibold">Cita-cita</label>
-                <input type="text" id="cita_cita" class="form-control" placeholder="Contoh: Software Engineer">
               </div>
             </div>
           </div>
