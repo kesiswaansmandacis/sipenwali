@@ -9,7 +9,7 @@ const CONFIG = {
   PERMENDIKDASMEN_REF: 'Permendikdasmen No. 11 Tahun 2025',
   
   // URL Web App Google Apps Script Anda
-  API_BASE_URL: 'https://script.google.com/macros/s/AKfycbyxxTkUkWxODbXLIYJUN4coNFMEwc0406lu07jCOOyBcwlzKXjVQPmQFvAoQ1xPMJ8Ubg/exec',
+  API_BASE_URL: 'https://script.google.com/macros/s/AKfycbyBw9KAUud1m1YLA-SuIbQY-xfK_7qmc1td49qY6dRjkaNQtweDmTVILKp7zwtMnXX6QQ/exec',
   STORAGE_KEY_USER: 'ai_guru_wali_user',
   
   SEKOLAH_INFO: {
