@@ -1,4 +1,5 @@
 const App = {
+  guruData: CONFIG.MOCK_GURU,
   muridData: CONFIG.MOCK_MURID,
   pdpData: CONFIG.MOCK_PENDAMPINGAN,
   chartTrenInstance: null,
@@ -11,6 +12,49 @@ const App = {
     } else {
       App.navigateTo('dashboard');
     }
+  },
+
+  // Toggle Label Form Login Berdasar Role
+  toggleLoginFields: () => {
+    const role = document.getElementById('login-role').value;
+    const label = document.getElementById('label-username');
+    const input = document.getElementById('login-nip');
+
+    if (role === 'Murid / Orang Tua') {
+      label.innerText = 'NISN / No. HP Orang Tua';
+      input.placeholder = 'Masukkan NISN atau No. HP...';
+    } else {
+      label.innerText = 'NIP / ID Guru';
+      input.placeholder = 'Masukkan NIP Anda...';
+    }
+  },
+
+  // Handler Login Dinamis Berdasar Role
+  handleLogin: (e) => {
+    e.preventDefault();
+    const role = document.getElementById('login-role').value;
+    const nipInput = document.getElementById('login-nip').value.trim();
+
+    // Cari user di master guru atau buat session dinamis
+    let userObj = App.guruData.find(g => g.nip === nipInput);
+
+    if (!userObj) {
+      userObj = {
+        id_guru: 'GRU-' + Date.now(),
+        nip: nipInput || '198503152010011002',
+        nama_guru: role === 'Murid / Orang Tua' ? 'Portal Murid & Ortu' : 'Guru Wali',
+        kelas_binaan: 'Kelas X-A',
+        role: role
+      };
+    }
+
+    localStorage.setItem(CONFIG.STORAGE_KEY_USER, JSON.stringify(userObj));
+    App.navigateTo('dashboard');
+  },
+
+  logout: () => {
+    localStorage.removeItem(CONFIG.STORAGE_KEY_USER);
+    App.navigateTo('login');
   },
 
   navigateTo: async (viewName) => {
@@ -36,14 +80,21 @@ const App = {
         document.getElementById('main-content').style.marginLeft = 'var(--sidebar-width)';
       }
 
+      // Update profil di navbar atas
+      const user = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEY_USER) || '{}');
+      const nameElem = document.querySelector('.top-navbar .fw-semibold');
+      if (nameElem) nameElem.innerText = user.nama_guru || 'Pengguna';
+
       switch (viewName) {
         case 'dashboard':
           viewContainer.innerHTML = Views.dashboard();
           setTimeout(() => App.initDashboardCharts(), 50);
           break;
+        case 'kelola-guru':
+          viewContainer.innerHTML = Views.kelolaGuru(App.guruData);
+          break;
         case 'murid':
           viewContainer.innerHTML = Views.murid(App.muridData);
-          App.loadMuridDataRemote();
           break;
         case 'pendampingan':
           viewContainer.innerHTML = Views.pendampingan(App.pdpData);
@@ -55,14 +106,14 @@ const App = {
           viewContainer.innerHTML = Views.komunikasi();
           break;
         case 'laporan':
-          viewContainer.innerHTML = Views.laporan(App.muridData);
+          viewContainer.innerHTML = Views.laporan();
           break;
         case 'ai-assistant':
         case 'ai-chat':
           viewContainer.innerHTML = Views.aiChat();
           break;
         default:
-          viewContainer.innerHTML = Views[viewName] ? Views[viewName]() : Views.dashboard();
+          viewContainer.innerHTML = Views.dashboard();
       }
     }
     window.scrollTo(0, 0);
@@ -96,19 +147,6 @@ const App = {
     if (App.chartTargetInstance) { App.chartTargetInstance.destroy(); App.chartTargetInstance = null; }
   },
 
-  loadMuridDataRemote: async () => {
-    try {
-      const response = await fetch(`${CONFIG.API_BASE_URL}?action=getMurid`);
-      const resData = await response.json();
-      if (resData.status === 'success' && Array.isArray(resData.data) && resData.data.length > 0) {
-        App.muridData = resData.data;
-        document.getElementById('view-container').innerHTML = Views.murid(App.muridData);
-      }
-    } catch (err) {
-      console.log('Mode offline lokal.');
-    }
-  },
-
   openModalAddMurid: () => {
     document.getElementById('form-murid').reset();
     document.getElementById('id_murid').value = '';
@@ -126,7 +164,7 @@ const App = {
     modal.show();
   },
 
-  saveMurid: async (e) => {
+  saveMurid: (e) => {
     e.preventDefault();
     const id_murid = document.getElementById('id_murid').value;
     const payload = {
@@ -159,7 +197,8 @@ const App = {
     document.getElementById('form-pdp').reset();
     document.getElementById('id_pendampingan').value = '';
     document.getElementById('pdp_tanggal').value = new Date().toISOString().split('T')[0];
-    document.getElementById('pdp_nama_guru').value = CONFIG.CURRENT_USER.nama_guru;
+    const user = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEY_USER) || '{}');
+    document.getElementById('pdp_nama_guru').value = user.nama_guru || 'Guru Wali';
 
     const select = document.getElementById('pdp_id_murid');
     select.innerHTML = '<option value="">-- Pilih Murid --</option>' + App.muridData.map(m => `<option value="${m.id_murid}">${m.nama_murid}</option>`).join('');
@@ -168,7 +207,7 @@ const App = {
     modal.show();
   },
 
-  autoAnalyzeAI: async () => {
+  autoAnalyzeAI: () => {
     const masalah = document.getElementById('pdp_masalah').value;
     if (!masalah) return alert('Isi masalah terlebih dahulu.');
     document.getElementById('pdp_analisis').value = 'Analisis AI: Kurang fokus disebabkan oleh distraksi gawai pada malam hari.';
@@ -198,7 +237,7 @@ const App = {
   },
 
   deletePendampingan: (id_pdp) => {
-    if (confirm('Hapus catatan pendampingan ini?')) {
+    if (confirm('Hapus catatan ini?')) {
       App.pdpData = App.pdpData.filter(p => p.id_pendampingan !== id_pdp);
       document.getElementById('view-container').innerHTML = Views.pendampingan(App.pdpData);
     }
@@ -236,16 +275,14 @@ const App = {
       const resData = await response.json();
       document.getElementById(loadingId).innerHTML = `<strong class="d-block text-primary mb-1"><i class="bi bi-stars me-1"></i> AI Guru Wali</strong>${resData.result.replace(/\n/g, '<br>')}`;
     } catch (err) {
-      document.getElementById(loadingId).innerHTML = `<strong class="d-block text-primary mb-1"><i class="bi bi-stars me-1"></i> AI Guru Wali</strong>Berdasarkan data sampel kelas, murid Budi Santoso dan Siti Aminah menunjukkan perkembangan karakter yang positif (skor rata-rata 4.8/5.0).`;
+      document.getElementById(loadingId).innerHTML = `<strong class="d-block text-primary mb-1"><i class="bi bi-stars me-1"></i> AI Guru Wali</strong>Berdasarkan data sampel kelas, Budi Santoso dan Siti Aminah menunjukkan perkembangan karakter yang positif (skor 4.8/5.0).`;
     }
     chatBox.scrollTop = chatBox.scrollHeight;
   },
 
   exportPDFReport: () => html2pdf().from(document.getElementById('report-paper-container')).save('Laporan_Guru_Wali.pdf'),
-  exportWordReport: () => alert('Laporan format Word disiapkan untuk diunduh.'),
-  toggleSidebar: () => document.getElementById('sidebar-wrapper').classList.toggle('show'),
-  handleLogin: (e) => { e.preventDefault(); localStorage.setItem(CONFIG.STORAGE_KEY_USER, JSON.stringify(CONFIG.CURRENT_USER)); App.navigateTo('dashboard'); },
-  logout: () => { localStorage.removeItem(CONFIG.STORAGE_KEY_USER); App.navigateTo('login'); }
+  exportWordReport: () => alert('Laporan format Word disiapkan.'),
+  toggleSidebar: () => document.getElementById('sidebar-wrapper').classList.toggle('show')
 };
 
 document.addEventListener('DOMContentLoaded', () => App.init());
